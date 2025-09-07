@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>台南市中西區開山路房產</title>
+    <!-- 使用 Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 使用 Inter 字體 -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-4 flex items-center justify-center min-h-screen">
+
+    <!-- 主要內容容器 -->
+    <div class="max-w-6xl mx-auto w-full">
+        <h1 class="text-3xl md:text-4xl font-bold text-center mb-6 text-gray-800 tracking-tight">開山路大集合</h1>
+        
+        <!-- 網格容器，改為雙欄格狀 -->
+        <div id="grid-container" class="grid grid-cols-2 gap-4">
+            <!-- 格子將由 JavaScript 動態生成 -->
+        </div>
+    </div>
+
+    <!-- 彈出視窗 (Modal) -->
+    <div id="modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-70 p-4">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl transform transition-all duration-300 scale-95 opacity-0 overflow-hidden">
+            <!-- 彈出視窗內容 -->
+            <div class="p-4 md:p-6 flex flex-col md:flex-row">
+                <div class="md:w-1/2 md:pr-4 mb-4 md:mb-0">
+                    <!-- 動態載入圖片或影片 -->
+                    <div id="media-container" class="w-full h-auto rounded-lg shadow-md mb-2 relative"></div>
+                </div>
+                <div class="md:w-1/2">
+                    <h2 id="modal-title" class="text-xl font-bold text-gray-800 mb-2"></h2>
+                    <p id="modal-price" class="text-lg text-indigo-600 font-semibold mb-2"></p>
+                    <p id="modal-address" class="text-gray-600 mb-2"></p>
+                    <p id="modal-description" class="text-gray-700 mb-2"></p>
+                    <ul id="modal-features" class="text-sm text-gray-700 list-disc list-inside space-y-1"></ul>
+                    <button id="modal-close-btn" class="mt-4 px-4 py-1.5 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50">關閉</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 房屋資料陣列
+        const houses = [
+            {
+                id: 1,
+                name: '近台南大學1+1二樓寓',
+                media: 'https://youtu.be/rIUBVoWgYRU',
+                price: '新台幣 336 萬元',
+                address: '台南市中西區開山路 235 巷 23 之 1 號',
+                description: '台南市中西區開山路235巷23之1號',
+                features: ['地價: 5.8 坪', '登記坪數: 14.16 坪', '主建坪數: 14.16 坪', '公設坪數: 0 坪', '格局: 1 房 2 廳 1 衛 1 陽台', '屋齡: 47 年', '樓層: 2/4', '方位: 大門東北、落地窗東南', '#屋主自住帶看先聯絡承辦'],
+                mediaType: 'youtube'
+            },
+            {
+                id: 2,
+                name: '近台南大學清幽一樓寓',
+                media: 'https://youtu.be/mZKs1pkUokU',
+                price: '新台幣 500 萬元',
+                address: '台南市中西區開山路 235 巷 25 號',
+                description: '台南市中西區開山路235巷25號',
+                features: ['地坪: 5.8 坪', '登記坪數: 22.47 坪', '主建坪數: 22.47 坪', '格局: 1 房 3 廳 1 衛 (地下室開放空間)', '屋齡: 47 年', '樓層: 1/4', '方位: 大門西南、落地窗東南', '#目前有租客帶看先聯絡承辦', '#租約到 114/12/31, 5000 元/月'],
+                mediaType: 'youtube'
+            },
+            {
+                id: 3,
+                name: '近台南大學清幽三樓寓(B)',
+                media: 'https://youtu.be/I5tW0u033Fg',
+                price: '新台幣 325 萬元',
+                address: '台南市中西區開山路 235 巷 23 之 2 號',
+                description: '台南市中西區開山路235巷23之2號',
+                features: ['地坪: 5.8 坪', '登記坪數: 15.34 坪', '主建坪數: 14.16 坪', '公設坪數: 1.18 坪', '格局: 2 房 2 廳 1 衛 1 陽台', '屋齡: 47 年', '樓層: 3/4', '方位: 大門東北、落地窗東南', '#公司有鑰匙'],
+                mediaType: 'youtube'
+            },
+            {
+                id: 4,
+                name: '近台南大學清幽二樓寓',
+                media: 'https://youtu.be/4SPwjsvexpI',
+                price: '新台幣 325 萬元',
+                address: '台南市中西區開山路 235 巷 25 之 1 號',
+                description: '台南市中西區開山路235巷25之1號',
+                features: ['地坪: 5.8 坪', '登記坪數: 14.14 坪', '主建坪數: 14.14 坪', '格局: 2 房 2 廳 1 衛 1 陽台', '屋齡: 47 年', '樓層: 2/4', '方位: 大門西南、落地窗東南', '#公司有鑰匙', '#信佑 255 萬，首購最高 7 成'],
+                mediaType: 'youtube'
+            },
+            {
+                id: 5,
+                name: '近台南大學採光三房一樓寓',
+                media: 'https://youtu.be/DvxQ-muWoMk',
+                price: '新台幣 386 萬元',
+                address: '台南市中西區開山路 127 巷 102 號之 2',
+                description: '台南市中西區開山路127巷102號一樓之2',
+                features: ['地坪: 6.03 坪', '登記坪數: 21.37 坪', '主建坪數: 17.56 坪', '公設坪數: 3.81 坪', '格局: 3 房 2 廳 1 衛', '屋齡: 42 年', '樓層: 1/5', '#目前有租客帶看先聯絡承辦', '#租約到 115/3/31, 8700/月', '#公司管理有專用陽台'],
+                mediaType: 'youtube'
+            },
+            {
+                id: 6,
+                name: '近台南大學清幽三樓寓',
+                media: 'https://youtu.be/qJHFqfzirH4',
+                price: '新台幣 325 萬元',
+                address: '台南市中西區開山路 235 巷 25 之 2 號',
+                description: '台南市中西區開山路235巷25之2號',
+                features: ['地坪: 5.8 坪', '登記坪數: 15.32 坪', '主建坪數: 14.14 坪', '公設坪數: 1.18 坪', '格局: 2 房 2 廳 1 衛 1 陽台', '屋齡: 47 年', '樓層: 3/4', '方位: 大門西南、落地窗東南', '#公司有鑰匙'],
+                mediaType: 'youtube'
+            }
+        ];
+
+        const gridContainer = document.getElementById('grid-container');
+        const modal = document.getElementById('modal');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+        const mediaContainer = document.getElementById('media-container');
+
+        // 動態生成六宮格內容
+        function renderGrid() {
+            gridContainer.innerHTML = houses.map(house => {
+                const isBlueCover = (house.id === 1 || house.id === 3);
+                const isYellowCover = (house.id === 2 || house.id === 4 || house.id === 6);
+                const isRedCover = (house.id === 5);
+                
+                const priceText = house.price.replace('新台幣 ', '').replace('元', '');
+                
+                let bgColorClass = 'bg-gray-200';
+                let textColorClass = 'text-gray-800';
+
+                if (isBlueCover) {
+                    bgColorClass = 'bg-blue-600';
+                    textColorClass = 'text-white';
+                } else if (isYellowCover) {
+                    bgColorClass = 'bg-yellow-400';
+                    textColorClass = 'text-gray-800';
+                } else if (isRedCover) {
+                    bgColorClass = 'bg-red-600';
+                    textColorClass = 'text-white';
+                }
+                
+                let mediaHtml = `
+                    <div class="relative w-full aspect-[6/1] rounded-xl mb-2 overflow-hidden ${bgColorClass}">
+                        <div class="absolute inset-0 flex items-center justify-center p-2 text-center">
+                            <span class="text-3xl font-bold ${textColorClass}">${priceText}</span>
+                        </div>
+                    </div>`;
+
+                return `
+                    <div data-id="${house.id}" class="grid-item p-3 rounded-xl shadow-md cursor-pointer">
+                        ${mediaHtml}
+                        <h3 class="text-base font-semibold text-gray-800 mb-1 leading-tight">${house.name}</h3>
+                        <p class="text-xs text-gray-600">${house.description}</p>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 點擊格子時顯示彈出視窗
+        gridContainer.addEventListener('click', (e) => {
+            const gridItem = e.target.closest('.grid-item');
+            if (!gridItem) return;
+
+            const houseId = parseInt(gridItem.dataset.id);
+            const selectedHouse = houses.find(house => house.id === houseId);
+            
+            if (selectedHouse) {
+                // 清空媒體容器
+                mediaContainer.innerHTML = '';
+                
+                if (selectedHouse.mediaType === 'video') {
+                    const video = document.createElement('video');
+                    video.src = selectedHouse.media;
+                    video.controls = true;
+                    video.className = 'w-full h-auto rounded-lg shadow-md mb-4';
+                    mediaContainer.appendChild(video);
+                } else if (selectedHouse.mediaType === 'youtube') {
+                    // 處理 YouTube 影片
+                    const videoId = selectedHouse.media.split('/').pop().split('?')[0];
+                    const iframe = document.createElement('iframe');
+                    iframe.src = `https://www.youtube.com/embed/${videoId}`;
+                    iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+                    iframe.allowFullscreen = true;
+                    iframe.className = 'w-full h-full absolute top-0 left-0 rounded-lg';
+
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'relative w-full pt-[56.25%]'; // 16:9 aspect ratio
+                    wrapper.appendChild(iframe);
+                    mediaContainer.appendChild(wrapper);
+
+                } else if (selectedHouse.mediaType === 'image') {
+                    // 創建圖片藝廊
+                    let currentIndex = 0;
+                    const imageElement = document.createElement('img');
+                    imageElement.src = selectedHouse.media.length > 0 ? selectedHouse.media[currentIndex] : `https://placehold.co/800x150/FACC15/4B5563?text=無可用照片`;
+                    imageElement.alt = selectedHouse.name;
+                    imageElement.className = 'w-full h-auto rounded-lg shadow-md mb-4';
+                    
+                    const galleryControls = document.createElement('div');
+                    // Changed positioning and styling for better visibility
+                    galleryControls.className = 'absolute inset-0 flex items-center justify-between px-2 md:px-4';
+                    
+                    const prevButton = document.createElement('button');
+                    // Changed icon to SVG for better visibility and a more professional look
+                    prevButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8 md:w-10 md:h-10 text-white drop-shadow-lg"><path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm-4.28 9.22a.75.75 0 0 0 0 1.06l3 3a.75.75 0 1 0 1.06-1.06l-1.72-1.72h5.69a.75.75 0 0 0 0-1.5h-5.69l1.72-1.72a.75.75 0 0 0-1.06-1.06l-3 3Z" clip-rule="evenodd" /></svg>`;
+                    prevButton.className = 'p-1.5 md:p-2.5 rounded-full bg-gray-800 bg-opacity-70 transition duration-300 hover:bg-opacity-90 focus:outline-none';
+                    if (selectedHouse.media.length <= 1) prevButton.disabled = true;
+
+                    const nextButton = document.createElement('button');
+                    // Changed icon to SVG for better visibility and a more professional look
+                    nextButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8 md:w-10 md:h-10 text-white drop-shadow-lg"><path fill-rule="evenodd" d="M12 2.25c5.385 0 9.75 4.365 9.75 9.75s-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12 6.615 2.25 12 2.25Zm4.28 10.28a.75.75 0 0 0 0-1.06l-3-3a.75.75 0 1 0-1.06 1.06l1.72 1.72H8.25a.75.75 0 0 0 0 1.5h5.69l-1.72 1.72a.75.75 0 1 0 1.06 1.06l3-3Z" clip-rule="evenodd" /></svg>`;
+                    nextButton.className = 'p-1.5 md:p-2.5 rounded-full bg-gray-800 bg-opacity-70 transition duration-300 hover:bg-opacity-90 focus:outline-none';
+                    if (selectedHouse.media.length <= 1) nextButton.disabled = true;
+
+                    prevButton.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        currentIndex = (currentIndex > 0) ? currentIndex - 1 : selectedHouse.media.length - 1;
+                        imageElement.src = selectedHouse.media[currentIndex];
+                    });
+
+                    nextButton.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        currentIndex = (currentIndex < selectedHouse.media.length - 1) ? currentIndex + 1 : 0;
+                        imageElement.src = selectedHouse.media[currentIndex];
+                    });
+
+                    mediaContainer.appendChild(imageElement);
+                    if (selectedHouse.media.length > 1) {
+                         galleryControls.appendChild(prevButton);
+                         galleryControls.appendChild(nextButton);
+                         mediaContainer.appendChild(galleryControls);
+                    }
+                }
+                
+                // 更新彈出視窗內容
+                document.getElementById('modal-title').textContent = selectedHouse.name;
+                document.getElementById('modal-price').textContent = selectedHouse.price;
+                document.getElementById('modal-address').textContent = selectedHouse.address;
+                document.getElementById('modal-description').textContent = selectedHouse.description;
+
+                const featuresList = document.getElementById('modal-features');
+                featuresList.innerHTML = selectedHouse.features.map(feature => `<li>${feature}</li>`).join('');
+
+                // 顯示彈出視窗並添加動畫
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                setTimeout(() => {
+                    modal.querySelector('div').classList.remove('scale-95', 'opacity-0');
+                    modal.querySelector('div').classList.add('scale-100', 'opacity-100');
+                }, 10);
+            }
+        });
+
+        // 關閉彈出視窗
+        modalCloseBtn.addEventListener('click', () => {
+            modal.querySelector('div').classList.remove('scale-100', 'opacity-100');
+            modal.querySelector('div').classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.remove('flex');
+                modal.classList.add('hidden');
+                // 停止影片播放
+                const videoElement = mediaContainer.querySelector('video');
+                if (videoElement) {
+                    videoElement.pause();
+                    videoElement.currentTime = 0;
+                }
+            }, 300); // 這裡的延遲時間應與 CSS 過渡時間一致
+        });
+
+        // 點擊彈出視窗外部區域也關閉
+        modal.addEventListener('click', (e) => {
+            if (e.target.id === 'modal') {
+                modalCloseBtn.click();
+            }
+        });
+
+        // 網頁載入後執行
+        window.onload = renderGrid;
+    </script>
+
+</body>
+</html>
