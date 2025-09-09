@@ -247,14 +247,7 @@
 
         // 「聯絡承辦」按鈕事件
         modalContactBtn.addEventListener('click', () => {
-            if (currentHouse && currentHouse.agent_email) {
-                const subject = `詢問有關 ${currentHouse.name} 的資訊`;
-                const mailtoLink = `mailto:${currentHouse.agent_email}?subject=${encodeURIComponent(subject)}`;
-                window.location.href = mailtoLink;
-            } else {
-                // 如果沒有電子郵件，可以顯示一個訊息
-                console.log('此房產沒有可用的電子郵件。');
-            }
+            window.location.href = 'https://line.me/ti/p/QA5USW2vFx';
         });
 
         // 初始載入時渲染網格
